@@ -8,62 +8,48 @@
 #include <cstdlib>
 #include <iostream>
 #include <limits>
+#include "text_style.h"
+#include "validation.h"
+#include "number_theory.h"
 
 using namespace std;
+using namespace style;
+using namespace validation;
 
 int main()
 {
-  int n = 10;
-  do {
-    
-    int c = 2; // represents the number of divisors of `n`
+  function<bool(int)> is_valid = [](int a)
+  { return a >= 0; };
+  
+  int n = getValidInput(
+      cin,                                              // input stream
+      cout,                                             // output stream
+      "A positive integer or 0 to exit: ",              // prompt for input
+      fg_red("<Input is invalid, please try again>\n"), // error message
+      is_valid);
 
-    /* Prompt user for a valid input */
-    cout << "A positive integer or 0 to exit: ";
-    cin >> n;
-    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+  if (n == 0)
+    return EXIT_SUCCESS;
 
-    if(!cin.fail() && n > 0){ // validates input
-      /* Sieve the number if input is valid */
-      if(n == 1) // special number
-        cout << "\033[31m1 is NOT a prime number.\033[0m" << endl;
-      else if(n == 2 || n == 3) // first two primes
-        cout << "\033[32m" << n << " is a prime number.\033[0m" << endl;
-      else {
-        for(int i=2; i<n; i++){
-          if(n % i == 0){ // if n is divisible by i
-            c++; // increment divisors count
-            if(c == 3) { // if this is the first divisor
-              /* Prompt user that this number is not a prime number */
-              cout << "\033[31m" << n
-                   << " is NOT a prime number.\033[0m" << endl;
-              /* Print the list of divisors starting this divisor*/
-              cout << "Divisors of " << n << ":" << endl;
-              cout << "\t\033[3m1, " << i << ", ";
-            } else // for other divisor
-              cout << i << ", "; // print divisor
-          }
-        }
-
-        if(c>2) // not a prime
-          cout << n << "\033[0m" << endl; // print the number as the last divisor
-        else // the number is prime then prompt user that the number is a prime number
-          cout << "\033[32m" << n << " is a prime number.\033[0m" << endl;
+  if (number_theory::is_prime(n))
+    cout << fg_green(n, " is a prime number.\n");
+  else
+  {
+    cout << fg_red(n, " is NOT a prime number.\n");
+    if(n != 1){
+      cout << "Divisors of " << n << ":" << endl;
+      cout << italic("\t1, ");
+      for (int i = 2; i < n; i++)
+      {
+        if (n % i == 0)
+          cout << italic(i, ", ");
       }
-
-      /* Decoration to separate each sieving */
-      cout << endl << "---------------------------------" << endl;
-
-    /* Handle User Input Errors */
-    } else if(cin.fail() || n < 0)
-      cout << "\033[31m<Input is invalid, please try again>\033[0m" << endl;
-      if(cin.fail()){
-        n = 10; // reset variable, also to make sure program doesn't terminate
-        cin.clear();
-        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+      cout << italic(n) << endl;
     }
+  }
 
-  } while( n != 0 );
-
-  return EXIT_SUCCESS;
+  /* Decoration to separate each sieving */
+  cout << "---------------------------------" << endl;
+  
+  return main();
 }

@@ -3,6 +3,18 @@
         "iostream": "cpp",
         "cstdlib": "cpp",
         "ostream": "cpp",
-        "iosfwd": "cpp"
+        "iosfwd": "cpp",
+        "xstring": "cpp",
+        "limits": "cpp",
+        "atomic": "cpp",
+        "ios": "cpp",
+        "list": "cpp",
+        "system_error": "cpp",
+        "vector": "cpp",
+        "xhash": "cpp",
+        "xiosbase": "cpp",
+        "istream": "cpp",
+        "functional": "cpp",
+        "sstream": "cpp"
     }
 }

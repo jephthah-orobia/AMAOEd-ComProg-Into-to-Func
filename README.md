@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # About this repo
 > This contains demo examples for the lesson "Through the Loops" discussed by [Jephthah M. Orobia](https://github.com/jephthah-orobia).
 
@@ -17,3 +18,13 @@ This example shows the use of foreach-loop greet each names in a list. Checkout 
 This example shows the use of foreach-loop greet each names in a list. Checkout the branch [Ex3-PrimeSieve](https://github.com/jephthah-orobia/AMAOEd-Comp-Prog-Through-The-Loops-Examples/tree/Ex3-PrimeSieve).
 
 
+=======
+# Example 3: Theatre Seating Chart
+
+-A 2D array seatingChart is used to represent the seats in a theater.
+-The initial seating chart is displayed, showing available (O) and taken (X) seats.
+-The user is prompted to book a seat by entering the row and column number.
+-The program checks if the seat is available and updates the seating chart accordingly.
+-If the seat is already taken, prompt user.
+-The updated seating chart is displayed.
+>>>>>>> dime/Ex3-TheatreSeats

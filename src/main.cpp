@@ -12,8 +12,11 @@
 #include <iomanip>
 #include <limits>
 #include <vector>
+#include "validation.h"
+#include "text_style.h"
 
 using namespace std;
+using namespace style;
 
 int main()
 {
@@ -69,30 +72,16 @@ int main()
         break;
       }
     if(isNewItem)
-      cout << endl << "\033[3mNew item \033[32m" << item << "\033[39m will be created.\033[0m" << endl;
+      cout << endl << italic(fg_green(item)) << italic(" will be created.") << endl;
     
-      /* Prompt user for the stock count */
-    do{
-      if(cin.fail() || stock < 0 || stock > STOCKLIMIT){
-        cout << "\033[31mInvalid #, Please again. [0-"<< STOCKLIMIT <<" only]\033[0m" << endl;
-        if(cin.fail()){
-          cin.clear();
-          cin.ignore(numeric_limits<streamsize>::max(), '\n');
-        }
-        if(isNewItem)
-          stock = 0;
-        else{
-          for(auto i: items)
-            if(i.first == item){
-              stock = i.second;
-              break;
-            }
-        }
-      }
-      cout << "# of stocks for \033[32m" << item << "\033[0m: ";
-      cin >> stock;
-      cin.ignore(numeric_limits<streamsize>::max(), '\n');
-    } while (cin.fail() || stock < 0 || stock > STOCKLIMIT);
+    /* Prompt user for the stock count */
+    function<bool(int)> is_valid = [](int s){ return s >= 0 && s < STOCKLIMIT;};
+    stock = validation::getValidInput(
+      cin, cout,
+      "# of stocks for " + fg_green(item) +": ",
+      fg_red("Invalid #, Please again. [0-", STOCKLIMIT, " only]\n"),
+      is_valid
+    );
 
     /* Updating the table */
     if(isNewItem)

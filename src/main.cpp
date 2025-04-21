@@ -11,8 +11,11 @@
 #include <iostream>
 #include <iomanip>
 #include <limits>
+#include "validation.h"
+#include "text_style.h"
 
 using namespace std;
+using namespace style;
 
 int main()
 {
@@ -45,11 +48,11 @@ int main()
       for(int col = 1; col<=cols; col++){
         if(last_attempt.first == row && last_attempt.second == col){
           if(accomodated)
-            cout << "\033[32m";
+            cout << fg_green(" ", seatingChart[row-1][col-1], " ");
           else
-            cout << "\033[31m";
-        }
-        cout << " " << seatingChart[row-1][col-1] << " \033[0m";
+            cout << fg_red(" ", seatingChart[row-1][col-1], " ");
+        } else
+          cout << " " << seatingChart[row-1][col-1] << " ";
       }
       cout << endl;
     }
@@ -57,42 +60,31 @@ int main()
     /* Notify of the result of last action */
     if(last_attempt.first > 0){
       if(accomodated)
-        cout << endl << "\033[32mSeat "<<last_attempt.first<<"-"<<last_attempt.second
-            <<" was successfully reserved!\033[0m";
+        cout << endl << fg_green(last_attempt.first,"-",last_attempt.second," was successfully reserved!");
       else
-        cout << endl << "\033[31mSeat already taken. Choose another one.\033[0m";
+        cout << endl << fg_red("Seat already taken. Choose another one.");
     }
 
     cout << endl << "*** Seat to reserved ***" << endl;
 
     /* Prompt the user for row number*/
-    do{
-      if(cin.fail() || r < 1 || r > rows){
-        cout << "\033[31mInvalid row number. Try again [1-" << rows << "]!\033[0m" << endl;
-        if(cin.fail()){
-          cin.clear();
-          cin.ignore(numeric_limits<streamsize>::max(), '\n');
-        }
-      }
-      cout << "-> row number: ";
-      cin >> r;
-      cin.ignore(numeric_limits<streamsize>::max(), '\n');
-    } while(cin.fail() || r < 1 || r > rows);
+    function<bool(int)> is_valid_row = [rows](int a){return a > 0 && a < rows;};
+    r = validation::getValidInput(
+      cin, cout,
+      "-> row number: ",
+      fg_red("Invalid row number. Try again [1-", rows, "]!\n"),
+      is_valid_row
+    );
 
     /* Prompt the user for column number*/
-    do{
-      if(cin.fail() || c < 1 || c > cols){
-        cout << "\033[31mInvalid column number. Try again [1-" << cols << "]!\033[0m" << endl;
-        if(cin.fail()){
-          cin.clear();
-          cin.ignore(numeric_limits<streamsize>::max(), '\n');
-        }
-      }
-      cout << "-> column number: ";
-      cin >> c;
-      cin.ignore(numeric_limits<streamsize>::max(), '\n');
-    } while(cin.fail() || c < 1 || c > cols);
-    
+    function<bool(int)> is_valid_col = [rows](int a){return a > 0 && a < cols;};
+    c = validation::getValidInput(
+      cin, cout,
+      "-> column number: ",
+      fg_red("Invalid column number. Try again [1-", cols, "]!\n"),
+      is_valid_col
+    );
+
     /* update seating chart */
     if(seatingChart[r-1][c-1] == 'X'){
       accomodated = false;
